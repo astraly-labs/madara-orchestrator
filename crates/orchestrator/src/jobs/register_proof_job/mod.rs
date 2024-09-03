@@ -4,11 +4,10 @@ use async_trait::async_trait;
 use color_eyre::Result;
 use uuid::Uuid;
 
+use super::JobError;
 use crate::config::Config;
 use crate::jobs::types::{JobItem, JobStatus, JobType, JobVerificationStatus};
 use crate::jobs::Job;
-
-use super::JobError;
 
 pub struct RegisterProofJob;
 

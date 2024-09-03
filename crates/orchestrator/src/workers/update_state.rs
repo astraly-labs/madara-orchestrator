@@ -61,10 +61,11 @@ impl UpdateStateWorker {
 
 #[cfg(test)]
 mod test_update_state_worker_utils {
-    use crate::jobs::types::{ExternalId, JobItem, JobStatus, JobType};
-    use crate::workers::update_state::UpdateStateWorker;
     use rstest::rstest;
     use uuid::Uuid;
+
+    use crate::jobs::types::{ExternalId, JobItem, JobStatus, JobType};
+    use crate::workers::update_state::UpdateStateWorker;
 
     #[rstest]
     fn test_parse_job_items_into_block_number_list() {

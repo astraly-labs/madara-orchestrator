@@ -1,12 +1,10 @@
-use bytes::Bytes;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::sync::Arc;
 
-use crate::config::config;
-use crate::data_storage::MockDataStorage;
+use bytes::Bytes;
 use httpmock::prelude::*;
 use mockall::predicate::eq;
 use prover_client_interface::{MockProverClient, TaskStatus};
@@ -17,6 +15,8 @@ use url::Url;
 use uuid::Uuid;
 
 use super::super::common::default_job_item;
+use crate::config::config;
+use crate::data_storage::MockDataStorage;
 use crate::jobs::proving_job::ProvingJob;
 use crate::jobs::types::{JobItem, JobStatus, JobType};
 use crate::jobs::Job;
