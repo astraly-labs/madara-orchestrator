@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 
 use async_trait::async_trait;
+use cairo_vm::types::layout_name::LayoutName;
 use color_eyre::Result;
+use prove_block::{prove_block, ProveBlockError};
 use thiserror::Error;
+use utils::env_utils::get_env_var_or_panic;
 use uuid::Uuid;
 
 use super::constants::JOB_METADATA_SNOS_BLOCK;
@@ -22,6 +25,14 @@ pub enum SnosError {
 
     #[error("Other error: {0}")]
     Other(#[from] OtherError),
+}
+
+// ProveBlockError does not implement PartialEq - can't use #[from]
+impl From<ProveBlockError> for SnosError {
+    // TODO(akhercha): error conversion
+    fn from(_v: ProveBlockError) -> Self {
+        Self::UnspecifiedBlockNumber { internal_id: String::from("XD") }
+    }
 }
 
 pub struct SnosJob;
@@ -46,16 +57,16 @@ impl Job for SnosJob {
     }
 
     async fn process_job(&self, _config: &Config, job: &mut JobItem) -> Result<String, JobError> {
-        // 0. Get block number from metadata
-        let _block_number = self.get_block_number_from_metadata(job)?;
+        let block_number = self.get_block_number_from_metadata(job)?;
+        let rpc_url = get_env_var_or_panic("MADARA_RPC_URL"); // should never panic at this point
 
-        // 1. Build the required inputs for snos::prove_block
-
-        // 2. Run snos::prove_block
+        // TODO: Send directly the _config.starknet_client object instead of the rpc_url when snos allows it
+        let (_cairo_pie, _snos_output) =
+            prove_block(block_number, &rpc_url, LayoutName::all_cairo).await.map_err(SnosError::from)?;
 
         // 3. Store stuff
 
-        todo!()
+        Ok(String::from("my_cool_unique_id"))
     }
 
     async fn verify_job(&self, _config: &Config, _job: &mut JobItem) -> Result<JobVerificationStatus, JobError> {
